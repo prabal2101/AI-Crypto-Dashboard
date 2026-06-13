@@ -95,7 +95,7 @@ function toggleWatchlist(coinId, e) {
 function renderWatchlistTabIndicator() {
   const tab = DOM.tabWatchlist();
   if (tab) {
-    tab.innerHTML = `Watchlist <span style="background: var(--color-primary); font-size: 0.7rem; padding: 2px 6px; border-radius: 20px; font-weight: 700; color: white;">${watchlist.length}</span>`;
+    tab.innerHTML = `Watchlist <span style="background: var(--color-primary); font-size: 0.7rem; padding: 2px 6px; border-radius: 20px; font-weight: 700; color: #050505;">${watchlist.length}</span>`;
   }
 }
 

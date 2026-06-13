@@ -29,12 +29,12 @@ function generateSVGSparkline(prices, priceChange) {
     return `${x.toFixed(1)},${y.toFixed(1)}`;
   });
 
-  const strokeColor = priceChange >= 0 ? '#10b981' : '#ef4444'; // green or red
+  const strokeColor = priceChange >= 0 ? '#10B981' : '#EF4444'; // green or red
   const pathData = `M ${points.join(' L ')}`;
 
   // Create a subtle gradient fill underneath the sparkline
   const fillPoints = `${points[0].split(',')[0]},${height} L ${points.join(' L ')} L ${points[points.length - 1].split(',')[0]},${height} Z`;
-  const fillGradientId = `grad-${Math.random().toString(36).substr(2, 9)}`;
+  const fillGradientId = `grad-${Math.random().toString(36).substring(2, 11)}`;
 
   return `
     <svg class="coin-sparkline-svg" viewBox="0 0 ${width} ${height}">
@@ -122,18 +122,18 @@ function renderPriceChart(canvasId, historicalData, priceChange24h, showAIForeca
 
   // Determine accent color
   const isUp = priceChange24h >= 0;
-  const strokeColor = isUp ? '#10b981' : '#ef4444';
-  const glowColor = isUp ? 'rgba(16, 185, 129, 0.4)' : 'rgba(239, 68, 68, 0.4)';
+  const strokeColor = isUp ? '#10B981' : '#EF4444';
+  const glowColor = isUp ? 'rgba(16, 185, 129, 0.2)' : 'rgba(239, 68, 68, 0.2)';
 
   // Build beautiful UI line gradient fills
   const gradientFill = ctx.createLinearGradient(0, 0, 0, 300);
-  gradientFill.addColorStop(0, isUp ? 'rgba(16, 185, 129, 0.25)' : 'rgba(239, 68, 68, 0.25)');
-  gradientFill.addColorStop(1, 'rgba(7, 10, 19, 0)');
+  gradientFill.addColorStop(0, isUp ? 'rgba(16, 185, 129, 0.05)' : 'rgba(239, 68, 68, 0.05)');
+  gradientFill.addColorStop(1, 'rgba(11, 11, 11, 0)');
 
   // Build forecast gradient
   const forecastFill = ctx.createLinearGradient(0, 0, 0, 300);
-  forecastFill.addColorStop(0, 'rgba(6, 182, 212, 0.15)');
-  forecastFill.addColorStop(1, 'rgba(7, 10, 19, 0)');
+  forecastFill.addColorStop(0, 'rgba(6, 182, 212, 0.08)');
+  forecastFill.addColorStop(1, 'rgba(11, 11, 11, 0)');
 
   const datasets = [
     {
@@ -211,7 +211,7 @@ function renderPriceChart(canvasId, historicalData, priceChange24h, showAIForeca
           }
         },
         tooltip: {
-          backgroundColor: '#0c1225',
+          backgroundColor: '#0F1117',
           titleColor: '#fff',
           titleFont: { family: 'Outfit', size: 12, weight: 'bold' },
           bodyColor: '#f3f4f6',
