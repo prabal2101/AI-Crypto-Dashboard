@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- Primary SEO Metadata -->
+  <title>CryptoLive Terminal | Institutional-Grade Cryptocurrency Analytics Dashboard</title>
+  <meta name="description" content="Transform your crypto tracking experience. Real-time prices, historical Chart.js visualizations, market capitalization stats, Fear & Greed index, dynamic watchlist curation, and built-in AI assistant.">
+  <meta name="keywords" content="cryptocurrency, bitcoin tracker, live coin price, coin market cap, crypto chart, ethereum data, market sentiment, trading dashboard, fintech portfolio">
+  <meta name="author" content="Frontend Portfolio Project">
+  
+  <!-- FontAwesome & Google Fonts CDN Link -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Local Stylesheet -->
+  <link rel="stylesheet" href="css/styles.css">
+  
+  <!-- Chart.js CDN Link -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+  
+  <!-- TOAST NOTIFICATION CONTAINER -->
+  <div id="toast-container" class="toast-container" aria-live="polite"></div>
+
+  <!-- STICKY NAVBAR -->
+  <header>
+    <div class="container-app">
+      <nav>
+        <a href="#" class="logo-container" aria-label="CryptoLive Home">
+          <img src="images/logo.png" class="logo-img" alt="CryptoLive Terminal Logo">
+          <span class="logo-text">Crypto<span>Live</span></span>
+        </a>
+        
+        <ul class="nav-links" id="nav-links">
+          <li><a href="#" class="active"><i class="fa-solid fa-chart-line"></i> Markets</a></li>
+          <li><a href="#watchlist-anchor"><i class="fa-solid fa-star"></i> Watchlist</a></li>
+          <li><a href="#news-anchor"><i class="fa-solid fa-newspaper"></i> News</a></li>
+          <li><a href="#about-anchor"><i class="fa-solid fa-info-circle"></i> Technical Architecture</a></li>
+        </ul>
+
+        <div class="nav-actions">
+          <!-- Live API Badge indicator -->
+          <span id="api-status-badge" class="badge-success">Live API Active</span>
+          
+          <!-- Currency switcher -->
+          <select id="currency-select" class="currency-select" aria-label="Select Base Currency">
+            <option value="usd">USD ($)</option>
+            <option value="inr">INR (₹)</option>
+            <option value="eur">EUR (€)</option>
+          </select>
+          
+          <!-- Mock wallet connection -->
+          <button id="wallet-btn" class="btn-primary">
+            🔌 <span>Connect Wallet</span>
+          </button>
+          
+          <!-- Hamburger icon on mobile -->
+          <button id="hamburger-btn" class="hamburger-btn" aria-label="Open navigation menu">☰</button>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <!-- HERO / LANDING SECTION -->
+  <section class="hero-section container-app">
+    <div class="hero-left">
+      <h1>Track the Crypto <br><span class="gradient">Market in Real-Time</span></h1>
+      <p>Analyze live asset movements, study historical line charts, review psychological sentiment gauges, and chat with an embedded AI crypto assistant. Built with pure client-side technologies.</p>
+      <div class="hero-buttons">
+        <a href="#dashboard-anchor" class="btn-primary"><i class="fa-solid fa-gauge"></i> Launch Terminal</a>
+        <button id="manual-refresh-btn" class="btn-secondary">🔄 Refresh</button>
+      </div>
+    </div>
+    
+    <!-- Hero Right: Floating Glass Card displaying market overview -->
+    <div class="hero-right">
+      <div class="hero-floating-card glass-panel">
+        <h3 style="font-weight:700; margin-bottom:12px;">💡 Portfolio Insight</h3>
+        <p style="font-size:0.85rem; color:var(--color-text-muted); margin-bottom:15px; line-height:1.4;">This application caches network requests to stay highly responsive and implements a complete fallback mode using dynamic offline models to guarantee perfect presentations under high API congestion.</p>
+        <div style="display:flex; justify-content:space-between; font-size:0.75rem; border-top:1px solid var(--border-color); padding-top:10px;">
+          <span>Stack: Vanilla HTML5/CSS3/JS</span>
+          <span style="color:var(--color-secondary); font-weight:700;">No React Required</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MARKET OVERVIEW TICKER BANNER -->
+  <div class="market-stat-banner">
+    <div class="container-app">
+      <div class="ticker-wrap">
+        <div class="ticker-item">
+          <span class="label">Bitcoin Status:</span>
+          <span class="value" style="color: var(--color-success);">Active 🟢</span>
+        </div>
+        <div class="ticker-item">
+          <span class="label">CoinGecko API:</span>
+          <span class="value">v3 REST Link</span>
+        </div>
+        <div class="ticker-item">
+          <span class="label">Latency check:</span>
+          <span class="value" style="color: var(--color-secondary);">~120ms</span>
+        </div>
+        <div class="ticker-item">
+          <span class="label">System clock:</span>
+          <span class="value">Client-sync</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <main class="container-app" id="dashboard-anchor">
+    
+    <!-- MARKET SUMMARY CARDS GRID -->
+    <section class="market-overview-grid">
+      <!-- Card 1: Total Cap -->
+      <div class="overview-card glass-panel">
+        <div class="card-top">
+          <span class="card-title">Total Market Cap</span>
+          <div class="card-icon"><i class="fa-solid fa-globe"></i></div>
+        </div>
+        <div class="card-value" id="market-cap-val">$ --.--</div>
+        <div class="card-bottom">
+          <span style="color:var(--color-success); font-weight:600;"><i class="fa-solid fa-arrow-trend-up"></i> +2.1%</span>
+          <span>vs yesterday</span>
+        </div>
+      </div>
+
+      <!-- Card 2: Total Volume -->
+      <div class="overview-card glass-panel">
+        <div class="card-top">
+          <span class="card-title">24h Trade Volume</span>
+          <div class="card-icon"><i class="fa-solid fa-arrows-spin"></i></div>
+        </div>
+        <div class="card-value" id="volume-val">$ --.--</div>
+        <div class="card-bottom">
+          <span style="color:var(--color-success); font-weight:600;"><i class="fa-solid fa-arrow-trend-up"></i> +4.8%</span>
+          <span>liquidity surge</span>
+        </div>
+      </div>
+
+      <!-- Card 3: BTC Dominance -->
+      <div class="overview-card glass-panel">
+        <div class="card-top">
+          <span class="card-title">BTC Dominance</span>
+          <div class="card-icon"><i class="fa-brands fa-bitcoin"></i></div>
+        </div>
+        <div class="card-value" id="btc-dom-val">--.--%</div>
+        <div class="card-bottom">
+          <span>Bitcoin market share</span>
+        </div>
+      </div>
+
+      <!-- Card 4: Fear & Greed Sentiment (Dynamic Gauge) -->
+      <div class="overview-card glass-panel">
+        <div class="card-top">
+          <span class="card-title">Fear & Greed Index</span>
+          <span id="fng-classify" class="badge-success">Greed</span>
+        </div>
+        <div class="card-value" id="fng-val">--</div>
+        <div class="fng-meter-container">
+          <div class="fng-meter-track">
+            <div id="fng-meter-fill" class="fng-meter-fill"></div>
+            <div id="fng-meter-thumb" class="fng-meter-thumb"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- DASHBOARD CORE SECTION -->
+    <div class="dashboard-layout" id="watchlist-anchor">
+      
+      <!-- LEFT AREA: MARKET TABLE LIST -->
+      <section class="main-content-area glass-panel">
+        <div class="dashboard-card-title">
+          <i class="fa-solid fa-cubes"></i> Cryptocurrency Market Terminal
+        </div>
+
+        <!-- Filter, search, and switchers -->
+        <div class="filter-bar">
+          <div style="display:flex; gap:10px;">
+            <button id="tab-all" class="btn-secondary active">All Market</button>
+            <button id="tab-watchlist" class="btn-secondary">Watchlist</button>
+          </div>
+
+          <div class="search-box-container">
+            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+            <input type="text" id="search-input" class="search-input" placeholder="Search by name or symbol (e.g. BTC)..." aria-label="Search Cryptocurrencies">
+          </div>
+
+          <div class="sort-container">
+            <span class="sort-label">Sort By:</span>
+            <select id="sort-select" class="sort-select" aria-label="Select Table Sort Parameter">
+              <option value="market_cap">Market Cap</option>
+              <option value="price">Price</option>
+              <option value="change">24h Change</option>
+              <option value="volume">Volume</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Table Grid Container -->
+        <div class="coin-table-container">
+          <table class="coin-table">
+            <thead>
+              <tr>
+                <th style="width: 60px;" data-sort="market_cap_rank">#</th>
+                <th data-sort="name">Coin</th>
+                <th data-sort="price">Price</th>
+                <th data-sort="change">24h Change</th>
+                <th data-sort="market_cap">Market Cap</th>
+                <th style="width: 130px;">Last 7 Days</th>
+                <th style="width: 140px; text-align: right;">Action</th>
+              </tr>
+            </thead>
+            <tbody id="coin-table-body">
+              <!-- Dynamically populated rows or loading skeletons -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination Footer -->
+        <div class="pagination-container">
+          <div id="pagination-info" class="pagination-info">Showing -- to -- of -- entries</div>
+          <div id="pagination-buttons" class="pagination-buttons">
+            <!-- Dynamically populated pagination triggers -->
+          </div>
+        </div>
+      </section>
+
+      <!-- RIGHT AREA: SIDEBAR WIDGETS -->
+      <aside class="sidebar-area">
+        
+        <!-- Trending Widget -->
+        <div class="widget-panel glass-panel">
+          <div class="widget-title">
+            <span>🔥 Trending Assets</span>
+            <span class="badge" style="background: rgba(239, 68, 68, 0.15); color: #ef4444;">High Vol</span>
+          </div>
+          <div id="trending-list" class="widget-list">
+            <!-- Dynamic elements loaded via js/ui.js -->
+          </div>
+        </div>
+
+        <!-- Top Gainers Widget -->
+        <div class="widget-panel glass-panel">
+          <div class="widget-title">
+            <span>📈 Top 24h Gainers</span>
+            <span class="badge" style="background: rgba(16, 185, 129, 0.15); color: #10b981;">Bullish</span>
+          </div>
+          <div id="gainers-list" class="widget-list">
+            <!-- Dynamic elements loaded via js/ui.js -->
+          </div>
+        </div>
+
+        <!-- Top Losers Widget -->
+        <div class="widget-panel glass-panel">
+          <div class="widget-title">
+            <span>📉 Top 24h Losers</span>
+            <span class="badge" style="background: rgba(239, 68, 68, 0.15); color: #ef4444;">Bearish</span>
+          </div>
+          <div id="losers-list" class="widget-list">
+            <!-- Dynamic elements loaded via js/ui.js -->
+          </div>
+        </div>
+      </aside>
+
+    </div>
+
+    <!-- NEWS SECTION -->
+    <section class="news-section" id="news-anchor">
+      <div class="section-header">
+        <div class="section-title-wrapper">
+          <h2>📰 Market Analytics & News</h2>
+          <p>Read real-time global news headlines parsed directly from financial networks.</p>
+        </div>
+      </div>
+      <div class="news-grid" id="news-grid">
+        <!-- News elements loaded via js/ui.js -->
+      </div>
+    </section>
+
+    <!-- TECHNICAL DETAILS / ABOUT SECTION -->
+    <section class="about-section" id="about-anchor">
+      <div class="about-grid">
+        <div class="about-left">
+          <h3>🎓 Technical Implementation Details</h3>
+          <p>This application was developed as a clean-code portfolio interface demonstrating key frontend and API interaction capabilities. It operates completely on client browser resources without server-side middleware, making it suitable for B.Tech developer portfolio reviews.</p>
+          <div class="tech-tag-list">
+            <span class="tech-tag highlight">Semantic HTML5</span>
+            <span class="tech-tag highlight">Glassmorphic CSS3</span>
+            <span class="tech-tag highlight">Modular Vanilla JS</span>
+            <span class="tech-tag">Chart.js Engine</span>
+            <span class="tech-tag">CoinGecko API v3</span>
+            <span class="tech-tag">Alternative.me Index</span>
+            <span class="tech-tag">LocalStorage API</span>
+          </div>
+        </div>
+
+        <div class="about-right-card glass-panel">
+          <div class="about-feature-item">
+            <div class="about-feature-icon"><i class="fa-solid fa-database"></i></div>
+            <div>
+              <div class="about-feature-title">Data Caching & Cooldowns</div>
+              <div class="about-feature-desc">Prevents API rate limiting and excessive networking costs by wrapping calls in a custom JavaScript cache controller.</div>
+            </div>
+          </div>
+
+          <div class="about-feature-item">
+            <div class="about-feature-icon"><i class="fa-solid fa-bolt"></i></div>
+            <div>
+              <div class="about-feature-title">High-Speed Inline SVG Sparklines</div>
+              <div class="about-feature-desc">Draws lightweight sparkline trends natively in vector formats without loading hundreds of canvas objects, maintaining 60 FPS scrolling.</div>
+            </div>
+          </div>
+
+          <div class="about-feature-item">
+            <div class="about-feature-icon"><i class="fa-solid fa-robot"></i></div>
+            <div>
+              <div class="about-feature-title">Context-Aware AI Assistant Chatbot</div>
+              <div class="about-feature-desc">Integrates custom analytics and extracts real-time prices directly from the client memory state to create a complete chatbot assistant.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container-app footer-content">
+      <div class="footer-text">
+        <p>&copy; 2026 CryptoLive Dashboard Terminal. Refactored into pure premium architecture.</p>
+        <p style="font-size:0.75rem; color:var(--color-text-dim); margin-top:4px;">Educational portfolio project demonstrating high-performance frontend APIs.</p>
+      </div>
+      <div class="footer-socials">
+        <a href="#" class="social-link" aria-label="GitHub Repository"><i class="fa-brands fa-github"></i></a>
+        <a href="#" class="social-link" aria-label="LinkedIn Profile"><i class="fa-brands fa-linkedin"></i></a>
+        <a href="#" class="social-link" aria-label="Project Documentation"><i class="fa-solid fa-file-pdf"></i></a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- FLOATING AI ASSISTANT CHATBOT WIDGET -->
+  <div id="chatbot-widget" class="chatbot-widget">
+    <!-- Chat Toggle Bubble -->
+    <div id="chatbot-bubble" class="chatbot-bubble" role="button" aria-label="Open AI assistant chatbot">
+      <i class="fa-solid fa-robot"></i>
+      <span class="chatbot-badge"></span>
+    </div>
+    
+    <!-- Expandable Chat Terminal Window -->
+    <div class="chatbot-window">
+      <div class="chatbot-header">
+        <div class="chatbot-title-container">
+          <i class="fa-solid fa-brain"></i>
+          <div class="chatbot-title-text">
+            <h4>AI Crypto Copilot</h4>
+            <p>Active</p>
+          </div>
+        </div>
+        <button id="chatbot-close-btn" class="chatbot-close-btn" aria-label="Close Chat">✕</button>
+      </div>
+
+      <!-- Chat History -->
+      <div id="chatbot-messages" class="chatbot-messages">
+        <!-- Messages appended dynamically -->
+      </div>
+
+      <!-- Suggestion quick chips -->
+      <div id="chat-suggestions" class="chat-suggestions">
+        <!-- Dynamic suggest buttons -->
+      </div>
+
+      <!-- Text Inputs -->
+      <div class="chatbot-input-area">
+        <input type="text" id="chatbot-input" class="chatbot-input" placeholder="Ask AI Copilot about BTC or News..." aria-label="Chatbot Prompt Input">
+        <button id="chatbot-send-btn" class="chatbot-send-btn" aria-label="Send Message">
+          <i class="fa-solid fa-paper-plane"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CRYPTO DETAILS MODAL PANEL -->
+  <div id="coin-detail-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-coin-name">
+    <div class="modal-content">
+      <button class="modal-close-btn" aria-label="Close Details Modal">✕</button>
+      
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <div class="modal-coin-title-block">
+          <img class="modal-coin-icon" src="images/logo.png" alt="Coin Icon">
+          <h2 id="modal-coin-name" class="modal-coin-name">Solana</h2>
+          <span id="modal-coin-symbol" class="modal-coin-symbol">sol</span>
+        </div>
+        <div class="modal-coin-price-row">
+          <div class="modal-coin-price">$ 154.25</div>
+          <span id="modal-coin-change" class="badge-success">▲ 8.94%</span>
+        </div>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="modal-body">
+        
+        <!-- Left Side: Interactive Chart -->
+        <div>
+          <div class="chart-controls">
+            <div class="chart-period-tabs">
+              <button class="chart-tab active" data-days="1">24H</button>
+              <button class="chart-tab" data-days="7">7D</button>
+              <button class="chart-tab" data-days="30">30D</button>
+              <button class="chart-tab" data-days="365">1Y</button>
+            </div>
+            
+            <!-- AI Forecast Toggle -->
+            <button id="ai-forecast-btn" class="ai-forecast-btn">
+              <i class="fa-solid fa-wand-magic-sparkles"></i> AI 7D Forecast
+            </button>
+          </div>
+          
+          <div class="chart-canvas-container">
+            <canvas id="modal-price-chart"></canvas>
+          </div>
+
+          <!-- Price Analysis Paragraph -->
+          <div id="modal-coin-description" style="margin-top:20px; font-size:0.85rem; color:var(--color-text-muted); line-height:1.5; max-height: 100px; overflow-y: auto; padding-right:5px;">
+            Coin description load states...
+          </div>
+        </div>
+
+        <!-- Right Side: Statistical Performance Metrics -->
+        <div class="modal-stats-panel">
+          <h3 class="modal-stats-title">Market Performance</h3>
+          
+          <div class="stats-row">
+            <span class="label">Market Cap Rank</span>
+            <span class="value" id="modal-val-rank">#4</span>
+          </div>
+          <div class="stats-row">
+            <span class="label">Market Capitalization</span>
+            <span class="value" id="modal-val-cap">$ 69.4 B</span>
+          </div>
+          <div class="stats-row">
+            <span class="label">24h Trade Volume</span>
+            <span class="value" id="modal-val-vol">$ 3.4 B</span>
+          </div>
+          <div class="stats-row">
+            <span class="label">24h Price High</span>
+            <span class="value" id="modal-val-high" style="color:var(--color-success);">$ 156.40</span>
+          </div>
+          <div class="stats-row">
+            <span class="label">24h Price Low</span>
+            <span class="value" id="modal-val-low" style="color:var(--color-danger);">$ 148.90</span>
+          </div>
+          <div class="stats-row">
+            <span class="label">Circulating Supply</span>
+            <span class="value" id="modal-val-supply">449.2 M</span>
+          </div>
+          <div class="stats-row">
+            <span class="label">All Time High (ATH)</span>
+            <span class="value" id="modal-val-ath">$ 259.96</span>
+          </div>
+          <div class="stats-row">
+            <span class="label">All Time Low (ATL)</span>
+            <span class="value" id="modal-val-atl">$ 0.50</span>
+          </div>
+
+          <!-- Dynamic AI Insights Block -->
+          <div id="modal-ai-insights" class="ai-insights-box">
+            <!-- Populated via js/ui.js -->
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- APPLICATION JAVASCRIPT LOAD ENGINE -->
+  <script src="js/api.js"></script>
+  <script src="js/charts.js"></script>
+  <script src="js/chatbot.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/app.js"></script>
+
+</body>
+</html>
